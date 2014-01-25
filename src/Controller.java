@@ -10,8 +10,8 @@ import java.util.logging.Logger;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 /**
- *
  * @author nguyenvinhlinh
  */
 public class Controller {
@@ -25,39 +25,52 @@ public class Controller {
         this.client = client;
         this.view = view;
         view.setSendAction(new SendAction());
-        view.setRecieveAction(new RecieveAction());
+        view.setRecieveAction(new ReceiveAction());
     }
-
     public Controller() {
     }
-
-    public void setServer(Server s) {
-        server = s;
+    public void setServer(Server server) {
+        this.server = server;
     }
-
-    public void setView(View v) {
-        view = v;
+    public void setView(View view) {
+        this.view = view;
     }
-
-    public View getView() {
-        return view;
+    public void setClient(Client client){
+        this.client = client;
     }
-
-    public Server getServer() {
-        return server;
-    }
-    public void addSendActionListener(){
+    public void addSendActionListener() {
         view.setSendAction(new SendAction());
     }
-    public void addRevieveActionListener(){
-        view.setRecieveAction(new RecieveAction());
+    public void addRecieveActionListener() {
+        view.setRecieveAction(new ReceiveAction());
     }
-    class SendAction implements ActionListener {
 
+    class SendAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                server = new Server();
+               new Thread(new SendThread()).start();
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+        }
+    }
+    class ReceiveAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                new Thread(new ReceiveThread()).start();
+            } catch (Exception ex) {
+                System.err.println(ex);
+            }
+        }
+    }
+    //Thread for send acction
+    class SendThread implements Runnable{
+
+        @Override
+        public void run() {
+            try {
                 server.setFilePath(view.getFilePathText());
                 server.setPort(view.getPortTextS());
                 server.loadFile();
@@ -67,27 +80,23 @@ public class Controller {
                 System.err.println(ex);
             }
         }
+        
     }
-
-    class RecieveAction implements ActionListener {
+    //Thread for receive action
+    class ReceiveThread implements Runnable{
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void run() {
             try {
-                client = new Client(view.getServerIPText().getText(),view.getPortTextR(), view.getSavedFileLocation());
+                client.setSavedLocation(view.getSavedFileLocation());
+                client.setServerIP(view.getServerIPText());
+                client.setPort(view.getPortTextR());
                 client.connect();
-            } catch (IOException ex) {
+                client.download();
+            } catch (Exception ex) {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-
-    //TEST
-    public static void main(String[] args) {
-        View view = new View();
-        Controller controller = new Controller();
-        controller.setView(view);
-        controller.addRevieveActionListener();
-        controller.addSendActionListener();
+        
     }
 }
