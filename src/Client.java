@@ -45,31 +45,44 @@ public class Client extends Observable{
             setChanged();
             notifyObservers("Connected to server\nServer IP: "+socket.getInetAddress() +"\nServer port: "+socket.getPort());
             download();
-        } catch (Exception ex) {
-            System.out.println("Error");
+        } catch (IOException ex) {
+            System.out.println("Error occured, please check out the connection or status of sender");
+            hasChanged();
+            notifyObservers("Error occured, please check out the connection or status of server for example server's IP and its port.");
+            
         } 
     }
 
     public void download() throws IOException {
-        System.out.println("Downloading file");
-        inData = socket.getInputStream();
-        DataInputStream recievefileName = new DataInputStream(inData);
-        String fileName = recievefileName.readUTF();
-        setChanged();
-        notifyObservers("Downloading file named "+ fileName);
-        outData = new FileOutputStream(savedLocation + "/" + fileName);
-        //count the length of inData
-        byte[] dataArray = new byte[10000];
-        int length = inData.read(dataArray);
-        while (length != -1) {
-            outData.write(dataArray, 0, length);
-            length = inData.read(dataArray);
+        try{
+            System.out.println("Downloading file");
+            inData = socket.getInputStream();
+            DataInputStream recievefileName = new DataInputStream(inData);
+            String fileName = recievefileName.readUTF();
+            setChanged();
+            notifyObservers("Downloading file named "+ fileName);
+            outData = new FileOutputStream(savedLocation + "/" + fileName);
+            //count the length of inData
+            byte[] dataArray = new byte[10000];
+            int length = inData.read(dataArray);
+            while (length != -1) {
+                outData.write(dataArray, 0, length);
+                length = inData.read(dataArray);
+            }
+            inData.close();
+            outData.close();
+            System.out.println("Finished");
+            setChanged();
+            notifyObservers("Download completedly");
+            
+        } catch (IOException ex){
+            System.out.println("Disconnected from server");
+            setChanged();
+            notifyObservers("Disconnected from server");
+            System.err.println(ex);
+        } finally{
+            socket.close();
+            System.out.println("client: socket close");
         }
-        inData.close();
-        outData.close();
-        System.out.println("Finished");
-        setChanged();
-        notifyObservers("Download completedly");
-        socket.close();
     }
 }

@@ -29,7 +29,6 @@ public class Server extends Observable {
     private OutputStream outputData;
     private String filePath;
     private String fileName;
-    
 
     public void setPort(int newP) {
         port = newP;
@@ -47,18 +46,26 @@ public class Server extends Observable {
         return filePath;
     }
 
+    public ServerSocket getServer() {
+        return server;
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
     public void startServer() {
         try {
             server = new ServerSocket(port);
             InetAddress ip = InetAddress.getLocalHost();
             System.out.println("Server IP: " + ip + " at port: " + server.getLocalPort());
             setChanged();
-            notifyObservers("Server started \nServer IP: " +ip+"\nServer port: "+ server.getLocalPort()+"\nServer is ready to accept client");
+            notifyObservers("Server started \nServer IP: " + ip + "\nServer port: " + server.getLocalPort() + "\nServer is ready to accept client");
             socket = server.accept();
         } catch (Exception ex) {
             System.err.println(ex);
             setChanged();
-            notifyObservers("Port "+port+" has been used, Please choose another");
+            notifyObservers("Port " + port + " has been used, Please choose another");
         }
     }
 
@@ -85,8 +92,21 @@ public class Server extends Observable {
         inputData.close();
         outputData.close();
         System.out.println("Finished");
+        setChanged();
+        notifyObservers("Transfered Completedly");
         socket.close();
         server.close();
+    }
+
+    public void stopSending() {
+        try {
+            socket.close();
+            System.out.println("Server: socket closed");
+            server.close();
+            System.out.println("Server: server socket closed");
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
     }
 
     class Session implements Runnable {

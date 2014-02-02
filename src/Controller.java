@@ -38,13 +38,16 @@ public class Controller {
     public void setClient(Client client){
         this.client = client;
     }
+    //boolean upstreamming = false ;
     public void addSendActionListener() {
+        
         view.setSendAction(new SendAction());
     }
     public void addRecieveActionListener() {
         view.setRecieveAction(new ReceiveAction());
     }
-
+    
+    
     class SendAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -67,7 +70,6 @@ public class Controller {
     }
     //Thread for send acction
     class SendThread implements Runnable{
-
         @Override
         public void run() {
             try {
@@ -80,11 +82,9 @@ public class Controller {
                 System.err.println(ex);
             }
         }
-        
     }
     //Thread for receive action
     class ReceiveThread implements Runnable{
-
         @Override
         public void run() {
             try {
@@ -97,6 +97,13 @@ public class Controller {
                 Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+    }
+    
+    //Thread for stop sending status of sender/ server
+    class StopSending implements Runnable{
+        @Override
+        public void run() {
+            server.stopSending();
+        }   
     }
 }
