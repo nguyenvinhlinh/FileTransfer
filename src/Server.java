@@ -2,6 +2,7 @@
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,25 +56,43 @@ public class Server extends Observable {
     }
 
     public void startServer() {
+        boolean runWell = false;
         try {
             server = new ServerSocket(port);
             InetAddress ip = InetAddress.getLocalHost();
             System.out.println("Server IP: " + ip + " at port: " + server.getLocalPort());
             setChanged();
             notifyObservers("Server started \nServer IP: " + ip + "\nServer port: " + server.getLocalPort() + "\nServer is ready to accept client");
+            runWell = true;
             socket = server.accept();
-        } catch (Exception ex) {
+            socket.getInetAddress();
+            System.out.println(socket.getInetAddress());
+            setChanged();
+            notifyObservers("IP: " + socket.getInetAddress() +" connected to server");
+        } catch (IOException ex){
             System.err.println(ex);
             setChanged();
-            notifyObservers("Port " + port + " has been used, Please choose another");
+            if(runWell == true){
+                System.out.println("Server closed");
+                notifyObservers("Server closed");
+            }else {
+                notifyObservers("Port " + port + " has been used, Please choose another");
+            }
         }
     }
 
-    public void loadFile() throws IOException {
-        System.out.println("Loading file");
-        inputData = new FileInputStream(filePath);
-        fileName = new File(filePath).getName();
-        System.out.println("File is loaded at " + filePath);
+    public void loadFile() {
+        try{
+            System.out.println("Loading file");
+            inputData = new FileInputStream(filePath);
+            fileName = new File(filePath).getName();
+            System.out.println("File is loaded at " + filePath);
+    
+        } catch (FileNotFoundException ex){
+            System.err.println(ex);
+            setChanged();
+            notifyObservers("Wrong file directory");
+        }
     }
 
     public void upstreamFile() throws IOException {
@@ -119,8 +138,6 @@ public class Server extends Observable {
 
         @Override
         public void run() {
-
         }
     }
-
 }

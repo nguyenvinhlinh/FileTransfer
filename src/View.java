@@ -59,9 +59,10 @@ public class View extends JFrame implements Observer{
     public View() {
         //Frame
         setTitle("File Transfer");
-        setSize(600, 200);
+        setSize(600, 210);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
         //Menubar
         setJMenuBar(menuBar);
         menuBar.add(menu);
@@ -175,6 +176,15 @@ public class View extends JFrame implements Observer{
             }
         });
     }
+
+    public JButton getSendButton() {
+        return sendButton;
+    }
+
+    public JButton getRecieveButton() {
+        return recieveButton;
+    }
+    
     public void setSendAction(ActionListener e) {
         sendButton.addActionListener(e);
     }
@@ -182,14 +192,26 @@ public class View extends JFrame implements Observer{
         recieveButton.addActionListener(e);
     }
     public String getFilePathText() {
-
+        if(filePathText.getText().equals("")){
+            appendDatalog("File path must not be null");
+        }
         return filePathText.getText();
     }
     public String getSavedFileLocation() {
         return savedPathText.getText();
     }
     public int getPortTextS() throws NumberFormatException {
-        return Integer.parseInt(portTextS.getText());
+        int port = -1;
+        try{
+            port = Integer.parseInt(portTextS.getText());
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex);
+            sendButton.setText("Send");
+            appendDatalog("Invalid port number");
+        }
+        
+        return port;
     }
     public int getPortTextR() throws NumberFormatException {
         return Integer.parseInt(portTextR.getText());

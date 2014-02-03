@@ -25,6 +25,11 @@ public class Client extends Observable{
     }
     public Client() {
     }
+
+    public Socket getSocket() {
+        return socket;
+    }
+    
     public void setServerIP(String serverIP) {
         this.serverIP = serverIP;
     }
