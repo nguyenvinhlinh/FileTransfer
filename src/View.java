@@ -1,6 +1,8 @@
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,53 +18,51 @@ import javax.swing.*;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 /**
- *
  * @author nguyenvinhlinh
  */
-public class View extends JFrame {
+public class View extends JFrame implements Observer{
 
-    JMenuBar menuBar = new JMenuBar();
-    JMenu menu = new JMenu("Option");
-    JMenuItem sendOption = new JMenuItem("Send");
-    JMenuItem recieveOption = new JMenuItem("Recieve");
-    JMenuItem exitOption = new JMenuItem("Exit");
-    JPanel sendPanel = new JPanel();
-    JPanel recievePanel = new JPanel();
+    private JMenuBar menuBar = new JMenuBar();
+    private JMenu menu = new JMenu("Option");
+    private JMenuItem sendOption = new JMenuItem("Send");
+    private JMenuItem recieveOption = new JMenuItem("Recieve");
+    private JMenuItem exitOption = new JMenuItem("Exit");
+    private JPanel sendPanel = new JPanel();
+    private JPanel recievePanel = new JPanel();
     //common component ---- Got error now
 //    JButton browseButtonS = new JButton("Browser");
 //    JLabel portLabelS = new JLabel ("At port: ");
 //    JTextField portTextS = new JTextField(10);
     //common components
-    JTextArea datalog = new JTextArea();
-    //components in send Panel
-    JLabel filePathLabel = new JLabel("File path: ");
-    JTextField filePathText = new JTextField(25);
-    JButton sendButton = new JButton("Send");
-    JButton browseButtonS = new JButton("Browser");
-    JLabel portLabelS = new JLabel("At port: ");
-    JTextField portTextS = new JTextField(10);
-    //component in recieve Panel
-    JLabel savedPathLabel = new JLabel("Recieve at: ");
-    JTextField savedPathText = new JTextField(25);
-    JLabel serverIPLabel = new JLabel("Server IP: ");
+    private JTextArea datalog = new JTextArea();
 
-    public JTextField getServerIPText() {
-        return serverIPText;
-    }
-
-    JTextField serverIPText = new JTextField(10);
-    JButton recieveButton = new JButton("Recieve");
-    JButton browseButtonR = new JButton("Browser");
-    JLabel portLabelR = new JLabel("At port: ");
-    JTextField portTextR = new JTextField(10);
+    private JScrollPane scrollPane;
+    //-------------------------------------------components in send Panel-----------------------------------------------------
+    private JLabel filePathLabel = new JLabel("File path: ");
+    private JTextField filePathText = new JTextField(25);
+    private JButton sendButton = new JButton("Send");
+    private JButton browseButtonS = new JButton("Browser");
+    private JLabel portLabelS = new JLabel("At port: ");
+    private JTextField portTextS = new JTextField(10);
+    //-------------------------------------------component in recieve Panel----------------------------------------------------
+    private JLabel savedPathLabel = new JLabel("Recieve at: ");
+    private JTextField savedPathText = new JTextField(25);
+    private JLabel serverIPLabel = new JLabel("Server IP: ");
+    private JTextField serverIPText = new JTextField(10);
+    private JButton recieveButton = new JButton("Recieve");
+    private JButton browseButtonR = new JButton("Browser");
+    private JLabel portLabelR = new JLabel("At port: ");
+    private JTextField portTextR = new JTextField(10);
 
     public View() {
         //Frame
         setTitle("File Transfer");
-        setSize(600, 200);
+        setSize(600, 210);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
         //Menubar
         setJMenuBar(menuBar);
         menuBar.add(menu);
@@ -75,7 +75,7 @@ public class View extends JFrame {
         filePathLabel.setBounds(50, 25, 75, 30);
         filePathText.setBounds(125, 28, 290, 22);
         browseButtonS.setBounds(420, 28, 100, 22);
-        
+
         browseButtonS.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,20 +98,20 @@ public class View extends JFrame {
         sendPanel.add(portLabelS);
         sendPanel.add(portTextS);
         sendPanel.add(sendButton);
-        
-        //receive panel
+
+        //------------------------receive panel
         recievePanel.setLayout(null);
         savedPathLabel.setBounds(50, 25, 85, 30);
         savedPathText.setBounds(135, 28, 270, 22);
         browseButtonR.setBounds(420, 28, 100, 22);
-        browseButtonR.addActionListener(new ActionListener(){
+        browseButtonR.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
                 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnV = chooser.showDialog(recievePanel, "Save");
-                if(returnV == JFileChooser.APPROVE_OPTION){
-                    
+                if (returnV == JFileChooser.APPROVE_OPTION) {
+
                     //savedPathText.setText(chooser.getSelectedFile().getAbsolutePath());
                     System.out.println("Saved location: " + chooser.getSelectedFile().getPath());
                     savedPathText.setText(chooser.getSelectedFile().getPath());
@@ -134,10 +134,13 @@ public class View extends JFrame {
         recievePanel.add(browseButtonR);
         recievePanel.add(portLabelR);
         recievePanel.add(portTextR);
-        
+
         //Data log
-        datalog.setBounds(240, 60, 340, 75);
-        sendPanel.add(datalog);
+        scrollPane = new JScrollPane(datalog);
+        datalog.setLineWrap(true);
+        //datalog.setBounds(240, 60, 340, 75);
+        scrollPane.setBounds(240, 60, 340, 75);
+        sendPanel.add(scrollPane);
         //addup
 
         add(sendPanel);
@@ -148,21 +151,21 @@ public class View extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 remove(recievePanel);
                 add(sendPanel);
-                datalog.setBounds(240, 60, 340, 75);
-                recievePanel.remove(datalog);
-                sendPanel.add(datalog);
+                scrollPane.setBounds(240, 60, 340, 75);
+                recievePanel.remove(scrollPane);
+                sendPanel.add(scrollPane);
                 paintComponents(getGraphics());
             }
         });
         recieveOption.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+
                 remove(sendPanel);
                 add(recievePanel);
-                datalog.setBounds(300, 60, 280, 75);
-                sendPanel.remove(datalog);
-                recievePanel.add(datalog);
+                scrollPane.setBounds(300, 60, 280, 75);
+                sendPanel.remove(scrollPane);
+                recievePanel.add(scrollPane);
                 paintComponents(getGraphics());
             }
         });
@@ -173,22 +176,57 @@ public class View extends JFrame {
             }
         });
     }
+
+    public JButton getSendButton() {
+        return sendButton;
+    }
+
+    public JButton getRecieveButton() {
+        return recieveButton;
+    }
+    
     public void setSendAction(ActionListener e) {
         sendButton.addActionListener(e);
     }
-    public void setRecieveAction(ActionListener e){
+    public void setRecieveAction(ActionListener e) {
         recieveButton.addActionListener(e);
     }
     public String getFilePathText() {
+        if(filePathText.getText().equals("")){
+            appendDatalog("File path must not be null");
+        }
         return filePathText.getText();
     }
-    public String getSavedFileLocation(){
+    public String getSavedFileLocation() {
         return savedPathText.getText();
     }
-    public int getPortTextS() throws NumberFormatException{
-        return Integer.parseInt(portTextS.getText());
+    public int getPortTextS() throws NumberFormatException {
+        int port = -1;
+        try{
+            port = Integer.parseInt(portTextS.getText());
+        }
+        catch (NumberFormatException ex){
+            System.err.println(ex);
+            sendButton.setText("Send");
+            appendDatalog("Invalid port number");
+        }
+        
+        return port;
     }
-    public int getPortTextR() throws NumberFormatException{
+    public int getPortTextR() throws NumberFormatException {
         return Integer.parseInt(portTextR.getText());
     }
+    public String getServerIPText() {
+        return serverIPText.getText();
+    }
+    public void appendDatalog(String message){
+        datalog.append(message + "\n");
+    }
+
+
+    @Override
+    public void update(Observable o, Object arg) {
+        appendDatalog((String)arg);
+    }
+
 }
