@@ -7,4 +7,4 @@ Today is January 25, 2014. One week before TET holiday. Happy new year.
 
 ###February 4, 2014###
 Adding new feature, User can stop the uploading process and
-downloading process.
+downloading process during using time.
