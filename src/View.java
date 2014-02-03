@@ -29,6 +29,11 @@ public class View extends JFrame implements Observer{
     private JMenuItem sendOption = new JMenuItem("Send");
     private JMenuItem recieveOption = new JMenuItem("Recieve");
     private JMenuItem exitOption = new JMenuItem("Exit");
+    
+    private JMenu help = new JMenu("Help");
+    private JMenuItem instruction = new JMenuItem("Instruction");
+    private JMenuItem aboutMe = new JMenuItem("About");
+    
     private JPanel sendPanel = new JPanel();
     private JPanel recievePanel = new JPanel();
     //common component ---- Got error now
@@ -69,6 +74,10 @@ public class View extends JFrame implements Observer{
         menu.add(sendOption);
         menu.add(recieveOption);
         menu.add(exitOption);
+        
+        menuBar.add(help);
+        help.add(instruction);
+        help.add(aboutMe);
         //Send Panel
         sendPanel.setLayout(null);
         sendPanel.setOpaque(true);
