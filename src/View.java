@@ -31,7 +31,7 @@ public class View extends JFrame implements Observer{
     private JMenuItem exitOption = new JMenuItem("Exit");
     
     private JMenu help = new JMenu("Help");
-    private JMenuItem instruction = new JMenuItem("Instruction");
+    //private JMenuItem instruction = new JMenuItem("Instruction");
     private JMenuItem aboutMe = new JMenuItem("About");
     
     private JPanel sendPanel = new JPanel();
@@ -64,7 +64,7 @@ public class View extends JFrame implements Observer{
     public View() {
         //Frame
         setTitle("File Transfer");
-        setSize(600, 210);
+        setSize(620, 210);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -76,7 +76,7 @@ public class View extends JFrame implements Observer{
         menu.add(exitOption);
         
         menuBar.add(help);
-        help.add(instruction);
+        //help.add(instruction);
         help.add(aboutMe);
         //Send Panel
         sendPanel.setLayout(null);
@@ -148,7 +148,7 @@ public class View extends JFrame implements Observer{
         scrollPane = new JScrollPane(datalog);
         datalog.setLineWrap(true);
         //datalog.setBounds(240, 60, 340, 75);
-        scrollPane.setBounds(240, 60, 340, 75);
+        scrollPane.setBounds(240, 60, 340, 77);
         sendPanel.add(scrollPane);
         //addup
 
@@ -160,7 +160,7 @@ public class View extends JFrame implements Observer{
             public void actionPerformed(ActionEvent e) {
                 remove(recievePanel);
                 add(sendPanel);
-                scrollPane.setBounds(240, 60, 340, 75);
+                scrollPane.setBounds(240, 60, 340, 77);
                 recievePanel.remove(scrollPane);
                 sendPanel.add(scrollPane);
                 paintComponents(getGraphics());
@@ -182,6 +182,16 @@ public class View extends JFrame implements Observer{
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(3);
+            }
+        });
+        aboutMe.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                datalog.setText("Programmer: Nguyen Vinh Linh"
+                        + "\nContact:s3410595@rmit.edu.vn"
+                        + "\nThis program is free and opensource"
+                        + "\nYou can get its source code on https://github.com/nguyenvinhlinh/FileTransfer");
             }
         });
     }
@@ -237,5 +247,4 @@ public class View extends JFrame implements Observer{
     public void update(Observable o, Object arg) {
         appendDatalog((String)arg);
     }
-
-}
+}   
