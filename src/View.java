@@ -27,7 +27,7 @@ public class View extends JFrame implements Observer{
     private JMenuBar menuBar = new JMenuBar();
     private JMenu menu = new JMenu("Option");
     private JMenuItem sendOption = new JMenuItem("Send");
-    private JMenuItem recieveOption = new JMenuItem("Recieve");
+    private JMenuItem recieveOption = new JMenuItem("Receive");
     private JMenuItem exitOption = new JMenuItem("Exit");
     
     private JMenu help = new JMenu("Help");
